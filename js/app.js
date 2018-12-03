@@ -50,7 +50,7 @@ const gameServices = {
 
             let currentTime = minutes + ":" + seconds;
             clock.innerHTML = currentTime;
-        });
+        }, 750);
     },
 
     checkCards() {
@@ -86,6 +86,59 @@ const gameServices = {
         }
     }
 };
+
+const inGameActions = {
+    shuffleCards() {
+        const cardsShuffled = shuffle(listOfCards);
+        deck.innerHTML = '';
+        gameServices.updateScore();
+        cardsShuffled.forEach(element => {
+            deck.appendChild(element);
+        });
+    },
+
+    initiateGame() {
+        clock.innerHTML = "00:00"
+        deck.addEventListener('click', event => {
+            if (!startGame) {
+                gameServices.clockStart();
+                startGame = true;
+            }
+            selectedCard = event.target;
+            if (selectedCard.nodeName == 'LI') {
+                openedCard = selectedCard.className.includes('open');
+                matchedCard = selectedCard.className.includes('match');
+
+                if (!openedCard && !matchedCard) {
+                    card.toggle(selectedCard, ['open', 'show']);
+                    this.endGame();
+                }
+            }
+        });
+    },
+
+    endGame() {
+        const matchedCards = document.getElementsByClassName('match');
+        if (matchedCards.length === 16) {
+            clearInterval(timer);
+        }
+    },
+
+    restartGame() {
+        const numberOfStars = document.getElementsByClassName('fa-star');
+        moves = 0;
+        startGame = false;
+        clearInterval(timer);
+        clearTimeout(totalTimePlayed);
+        cardsOnDeck.forEach(card => {
+            card.className = 'card';
+        });
+        for (let star of numberOfStars) {
+            star.classList.add('scored');
+        }
+        inGameActions.shuffleCards();
+    }
+}
 
 /*
  * set up the event listener for a card. If a card is clicked:
