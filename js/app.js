@@ -138,6 +138,11 @@ const inGameActions = {
         const matchedCards = document.getElementsByClassName('match');
         if (matchedCards.length === 16) {
             clearInterval(timer);
+            createModal(
+                "CONGRATULATIONS!",
+                "success",
+                "You could find all the matches!"
+            )
         }
     },
 
