@@ -155,4 +155,24 @@ const inGameActions = {
         }
         inGameActions.shuffleCards();
     }
+};
+
+function createModal(modalTitle, modalClassTittle, modalMessage) {
+    const modal = document.querySelector('.result');
+    const title = document.getElementById('.title');
+    const message = document.getElementById('.message');
+    const movesScore = document.querySelector('.moves-score');
+    const timerScore = document.querySelector('.timer-score');
+    const restartButton = document.querySelector('.button');
+
+    modal.classList.add('show');
+    title.innerHTML = modalTitle;
+    title.classList = modalClassTittle;
+    message.innerHTML = modalMessage;
+    movesScore.innerHTML = moves;
+    timerScore.innerHTML = clock.innerHTML;
+    restartButton.addEventListener('click', event => {
+        modal.classList.remove('show');
+        inGameActions.restartGame();
+    });
 }
