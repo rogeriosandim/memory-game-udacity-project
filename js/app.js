@@ -1,7 +1,16 @@
-/*
- * Create a list that holds all of your cards
- */
+const clock = document.querySelector('.clock');
+const deck = document.querySelector('.deck');
+const restart = document.querySelector('.restart');
+const cardsOnDeck = document.querySelector('.card');
+const listOfCards = [...cardsOnDeck];
 
+let scored = document.getElementsByClassName('scored');
+let timer;
+let startGame = false;
+
+let cardsOpened = [];
+let moves = 0;
+let totalTimePlayed;
 
 /*
  * Display the cards on the page
