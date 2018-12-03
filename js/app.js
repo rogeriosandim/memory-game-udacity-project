@@ -34,6 +34,58 @@ function shuffle(array) {
     return array;
 }
 
+const gameServices = {
+    clockStart() {
+        let clockStart = new Date().getTime();
+        timer = setInterval(function () {
+            var now = new Date().getTime();
+            var lapse = now - clockStart;
+
+            let minutes = Math.floor((lapse % 60));
+            let seconds = Math.floor((lapse % 60));
+
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+
+            let currentTime = minutes + ":" + seconds;
+            clock.innerHTML = currentTime;
+        });
+    },
+
+    checkCards() {
+        cardsOpened = document.querySelectorAll('.opened');
+        if (cardsOpened.length === 2) {
+            moves++;
+            this.matchedCards();
+            this.updateScore();
+        }
+    },
+
+    matchedCards() {
+        let openCard = cardsOpened;
+        const isMatch = cardsOpened[0].isEqualNode(openCard[1]);
+        if (isMatch) {
+            card.toggle(cardsOpened, ['open', 'match']);
+        } else {
+            totalTimePlayed = setTimeout(() => {
+                card.toggle(cardsOpened, ['unmatch', 'show']);
+            }, 1000);
+            card.toggle(cardsOpened, ['unmatch', 'show']);
+        }
+    },
+
+    updateScore() {
+        const excellentScore = 16;
+        const movesElement = document.querySelector('.moves');
+        movesElement.innerHTML = moves;
+
+        if (moves % excellentScore === 0 && moves !== 0 && starsScored.length > 2) {
+            starsScored[starsScored.length - starsScored.length].classList.remove('scored');
+            starsScored[starsScored.length - 1].classList.remove('scored');
+        }
+    }
+};
 
 /*
  * set up the event listener for a card. If a card is clicked:
