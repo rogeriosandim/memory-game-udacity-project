@@ -1,7 +1,7 @@
 const clock = document.querySelector('.clock');
 const deck = document.querySelector('.deck');
 const restart = document.querySelector('.restart');
-const cardsOnDeck = document.querySelector('.card');
+const cardsOnDeck = document.querySelectorAll('.card');
 const listOfCards = [...cardsOnDeck];
 
 let scored = document.getElementsByClassName('scored');
@@ -44,7 +44,7 @@ let card = {
             });
         } else {
             classes.forEach(classy => {
-                cardSelected.classList.toggle(classy);
+                cardsSelected.classList.toggle(classy);
             });
         }
         gameServices.checkCards();
@@ -58,24 +58,28 @@ const gameServices = {
             var now = new Date().getTime();
             var lapse = now - clockStart;
 
-            let minutes = Math.floor((lapse % 60));
-            let seconds = Math.floor((lapse % 60));
+            let minutes = Math.floor((lapse % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((lapse % (1000 * 60)) / 1000);
 
             if (seconds < 10) {
                 seconds = "0" + seconds;
             }
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
 
             let currentTime = minutes + ":" + seconds;
+
             clock.innerHTML = currentTime;
         }, 750);
     },
 
     checkCards() {
-        cardsOpened = document.querySelectorAll('.opened');
+        cardsOpened = document.querySelectorAll('.open');
         if (cardsOpened.length === 2) {
             moves++;
-            this.matchedCards();
             this.updateScore();
+            this.matchedCards();
         }
     },
 
@@ -86,26 +90,31 @@ const gameServices = {
             card.toggle(cardsOpened, ['open', 'match']);
         } else {
             totalTimePlayed = setTimeout(() => {
-                card.toggle(cardsOpened, ['unmatch', 'show']);
+                card.toggle(openCard, ['unmatch', 'show']);
             }, 1000);
-            card.toggle(cardsOpened, ['unmatch', 'show']);
+            card.toggle(cardsOpened, ['unmatch', 'open']);
         }
     },
 
     updateScore() {
-        const excellentScore = 16;
+        const excellentScore = 12;
         const movesElement = document.querySelector('.moves');
         movesElement.innerHTML = moves;
 
-        if (moves % excellentScore === 0 && moves !== 0 && starsScored.length > 2) {
-            starsScored[starsScored.length - starsScored.length].classList.remove('scored');
-            starsScored[starsScored.length - 1].classList.remove('scored');
+        if (moves % excellentScore === 0 && moves !== 0 && scored.length > 2) {
+            scored[scored.length - scored.length].classList.remove('scored');
+            scored[scored.length - 1].classList.remove('scored');
+        }
+        if (moves === 30 && scored.length === 2) {
+            scored[scored.length - scored.length].classList.remove('scored');
+            scored[scored.length - 1].classList.remove('scored');
         }
     }
 };
 
 const inGameActions = {
     shuffleCards() {
+        clock.innerHTML = "00:00"
         const cardsShuffled = shuffle(listOfCards);
         deck.innerHTML = '';
         gameServices.updateScore();
@@ -115,7 +124,6 @@ const inGameActions = {
     },
 
     initiateGame() {
-        clock.innerHTML = "00:00"
         deck.addEventListener('click', event => {
             if (!startGame) {
                 gameServices.clockStart();
@@ -125,25 +133,12 @@ const inGameActions = {
             if (selectedCard.nodeName == 'LI') {
                 openedCard = selectedCard.className.includes('open');
                 matchedCard = selectedCard.className.includes('match');
-
                 if (!openedCard && !matchedCard) {
                     card.toggle(selectedCard, ['open', 'show']);
                     this.endGame();
                 }
             }
         });
-    },
-
-    endGame() {
-        const matchedCards = document.getElementsByClassName('match');
-        if (matchedCards.length === 16) {
-            clearInterval(timer);
-            createModal(
-                "CONGRATULATIONS!",
-                "success",
-                "You could find all the matches!"
-            )
-        }
     },
 
     restartGame() {
@@ -159,25 +154,50 @@ const inGameActions = {
             star.classList.add('scored');
         }
         inGameActions.shuffleCards();
+    },
+
+    endGame() {
+        const matchedCards = document.getElementsByClassName('match');
+        if (matchedCards.length === 16) {
+            clearInterval(timer);
+            showScore({
+                resultTitle: 'CONGRATULATIONS!',
+                classTitle: 'winning',
+                resultMessage: 'You could find all the matches!'
+            })
+        }
+        if (moves === 30) {
+            clearInterval(timer);
+            showScore({
+                resultTitle: 'GAME OVER!',
+                classTitle: 'game-over',
+                resultMessage: 'You could not find all the matches!'
+            })
+        }
     }
 };
 
-function createModal(modalTitle, modalClassTittle, modalMessage) {
-    const modal = document.querySelector('.result');
-    const title = document.getElementById('.title');
-    const message = document.getElementById('.message');
-    const movesScore = document.querySelector('.moves-score');
-    const timerScore = document.querySelector('.timer-score');
-    const restartButton = document.querySelector('.button');
+const result = document.querySelector('.result');
+const title = result.querySelector('.title');
+const message = result.querySelector('.message');
+const movesScore = result.querySelector('.moves-score');
+const timerScore = result.querySelector('.timer-score');
+const restartButton = result.querySelector('.button');
 
-    modal.classList.add('show');
-    title.innerHTML = modalTitle;
-    title.classList = modalClassTittle;
-    message.innerHTML = modalMessage;
+function showScore({ resultTitle, classTitle, resultMessage }) {
+    result.classList.add('show');
+    title.innerHTML = resultTitle;
+    title.classList = classTitle;
+    message.innerHTML = resultMessage;
     movesScore.innerHTML = moves;
     timerScore.innerHTML = clock.innerHTML;
     restartButton.addEventListener('click', event => {
-        modal.classList.remove('show');
+        result.classList.remove('show');
         inGameActions.restartGame();
     });
 }
+
+inGameActions.shuffleCards();
+inGameActions.initiateGame();
+
+restart.addEventListener('click', inGameActions.restartGame);
