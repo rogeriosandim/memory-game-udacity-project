@@ -25,4 +25,4 @@ or
 * You can restart it at any moment by clicking in the circle arrow.
 
 ## Gameplay
-![Memory Game](memory-game.gif)
+![](memory-game.gif)
