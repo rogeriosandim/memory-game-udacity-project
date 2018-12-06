@@ -63,22 +63,53 @@ h1 {
     justify-content: center;
     align-items: center;
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
+    transform: rotateY(180deg);
+    transition: transform 0.2s ease, background 0.1s linear;
 }
 
 .deck .card.open {
-    transform: rotateY(0);
     background: #02b3e4;
     cursor: default;
 }
 
 .deck .card.show {
     font-size: 33px;
+    transform: rotateY(0);
 }
 
 .deck .card.match {
     cursor: default;
     background: #02ccba;
-    font-size: 33px;
+    animation: matched 0.8s ease;
+}
+
+@keyframes matched {
+    33% {
+        background: #02ccba;
+        transform: scale(1.1);
+    }
+    66% {
+        transform: scale(1);
+    }
+}
+
+.deck .card.unmatch {
+    cursor: default;
+    background: #ff0000;
+    animation: unmatched 0.8s ease;
+}
+
+@keyframes unmatched {
+    33% {
+        transform: rotateZ(4deg) translateX(10px);
+    }
+    66% {
+        transform: rotateZ(-4deg) translateX(-10px);
+    }
+}
+
+.hidden {
+    display: none;
 }
 
 /*
@@ -106,4 +137,152 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
+    padding: 5px;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s linear;
+}
+
+.score-panel .restart:hover {
+    opacity: 0.5;
+    transform: rotateZ(360deg);
+    color: green;
+}
+
+.fa-star.scored {
+    color: yellow;
+    text-shadow: 0px 0px 3px #000;
+}
+
+.fa-star {
+    color: rgba(0, 0, 0, 0.1);
+}
+
+.result {
+    background-color: white;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 20px 10px;
+    vertical-align: middle;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+
+.result::before {
+    content: '';
+    vertical-align: middle;
+    display: inline-block;
+    height: 100%;
+}
+
+.result.show {
+    display: inline-block;
+    background-color: rgba(40, 40, 40, 0.6);
+}
+
+.result > .wrapper {
+    max-width: 100%;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    vertical-align: middle;
+    display: inline-block;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+    padding: 20px 60px 30px;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: transform 0.3s ease, opacity 0.2s linear;
+}
+
+.result.show > .wrapper {
+    transform: scale(1);
+    opacity: 1;
+    transition: transform 0.3s cubic-bezier(0, 0.6, 0.3, 1.3), opacity 0.2s linear;
+}
+
+.result > .wrapper > h1 {
+    font-weight: 600;
+}
+
+.actions > .button {
+    margin: 1rem 0.5rem 0;
+    border: none;
+    box-shadow: 0 5px 25px -5px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    cursor: pointer;
+    background: #00e605;
+    color: white;
+    font-size: 14px;
+    border-radius: 10px;
+    transition: background 0.2s linear;
+}
+
+.actions > .button.-reset {
+    background: transparent;
+    box-shadow: none;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.actions > .button.-reset:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.actions > .button:hover {
+    background: lightgreen;
+}
+
+.winning {
+    color: #00e600;
+}
+
+.game-over {
+    color: red;
+}
+
+.score-text {
+    color: lightgray;
+}
+
+.score {
+    margin-bottom: 1rem;
+}
+
+.score p {
+    margin: 0 0.5em;
+}
+
+.stars.score {
+    margin: 0;
+    padding: 5px 10px;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 0 5px 0 0;
+}
+
+.stars.score li {
+    list-style: none;
+    display: inline-block;
+    font-size: 32px;
+    margin: 0 4px;
+    opacity: 0;
+}
+
+.stars.score li.animate {
+    opacity: 1;
+    transform: scale(1);
+    animation: animateStar 0.8s ease;
+}
+
+@keyframes animateStar {
+    0% {
+        opacity: 0;
+        transform: scale(2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
